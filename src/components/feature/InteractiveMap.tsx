@@ -27,80 +27,80 @@ const zoneCoordinates: { [key: string]: { lat: number, lng: number } } = {
   'Pantheon': { lat: 41.8986, lng: 12.4768 },
   'Campo de\' Fiori': { lat: 41.8955, lng: 12.4729 },
   'Piazza Navona': { lat: 41.8992, lng: 12.4731 },
-  
+
   // Trastevere
   'Trastevere': { lat: 41.8890, lng: 12.4692 },
-  
+
   // Vatican
   'Vaticano': { lat: 41.9029, lng: 12.4534 },
   'Borgo': { lat: 41.9029, lng: 12.4534 },
-  
+
   // Prati
   'Prati': { lat: 41.9109, lng: 12.4581 },
   'Della Vittoria': { lat: 41.9109, lng: 12.4581 },
-  
+
   // Flaminio
   'Flaminio': { lat: 41.9194, lng: 12.4762 },
   'Parioli': { lat: 41.9194, lng: 12.4762 },
   'Villa Borghese': { lat: 41.9194, lng: 12.4762 },
-  
+
   // Trieste
   'Trieste': { lat: 41.9267, lng: 12.5034 },
   'Salario': { lat: 41.9267, lng: 12.5034 },
   'Villa Ada': { lat: 41.9267, lng: 12.5034 },
-  
+
   // Nomentano
   'Nomentano': { lat: 41.9267, lng: 12.5156 },
   'Monte Sacro': { lat: 41.9267, lng: 12.5156 },
-  
+
   // Tiburtino
   'Tiburtino': { lat: 41.9099, lng: 12.5343 },
   'Casal Bruciato': { lat: 41.9099, lng: 12.5343 },
-  
+
   // Prenestino
   'Prenestino': { lat: 41.8889, lng: 12.5343 },
   'Centocelle': { lat: 41.8889, lng: 12.5343 },
-  
+
   // Casilino
   'Casilino': { lat: 41.8778, lng: 12.5456 },
   'Tor Pignattara': { lat: 41.8778, lng: 12.5456 },
-  
+
   // Appio Latino
   'Appio Latino': { lat: 41.8667, lng: 12.5123 },
   'Furio Camillo': { lat: 41.8667, lng: 12.5123 },
-  
+
   // Tuscolano
   'Tuscolano': { lat: 41.8556, lng: 12.5234 },
   'Don Bosco': { lat: 41.8556, lng: 12.5234 },
-  
+
   // Appio Pignatelli
   'Appio Pignatelli': { lat: 41.8445, lng: 12.5012 },
   'Capannelle': { lat: 41.8445, lng: 12.5012 },
-  
+
   // Ardeatino
   'Ardeatino': { lat: 41.8334, lng: 12.4901 },
   'Tor Marancia': { lat: 41.8334, lng: 12.4901 },
-  
+
   // Ostiense
   'Ostiense': { lat: 41.8556, lng: 12.4789 },
   'Garbatella': { lat: 41.8556, lng: 12.4789 },
-  
+
   // Testaccio
   'Testaccio': { lat: 41.8778, lng: 12.4789 },
   'Aventino': { lat: 41.8778, lng: 12.4789 },
-  
+
   // Trastevere areas
   'Monteverde': { lat: 41.8667, lng: 12.4567 },
   'Gianicolense': { lat: 41.8667, lng: 12.4567 },
-  
+
   // Aurelio
   'Aurelio': { lat: 41.8889, lng: 12.4345 },
   'Boccea': { lat: 41.8889, lng: 12.4345 },
-  
+
   // Trionfale
   'Trionfale': { lat: 41.9111, lng: 12.4456 },
   'Monte Mario': { lat: 41.9111, lng: 12.4456 },
-  
+
   // Default Rome center for unknown zones
   'Roma': { lat: 41.9028, lng: 12.4964 }
 };
@@ -132,7 +132,7 @@ class PriceLabel extends google.maps.OverlayView {
     div.style.cursor = 'pointer';
     div.style.zIndex = '1000';
     div.textContent = this.price;
-    
+
     this.div = div;
     const panes = this.getPanes();
     panes?.overlayLayer.appendChild(div);
@@ -140,10 +140,10 @@ class PriceLabel extends google.maps.OverlayView {
 
   draw() {
     if (!this.div) return;
-    
+
     const overlayProjection = this.getProjection();
     const position = overlayProjection.fromLatLngToDivPixel(this.position);
-    
+
     if (position) {
       this.div.style.left = (position.x - 30) + 'px';
       this.div.style.top = (position.y - 60) + 'px';
@@ -158,10 +158,10 @@ class PriceLabel extends google.maps.OverlayView {
   }
 }
 
-const InteractiveMap: React.FC<InteractiveMapProps> = ({ 
-  properties, 
-  onPropertyClick, 
-  highlightedPropertyId 
+const InteractiveMap: React.FC<InteractiveMapProps> = ({
+  properties,
+  onPropertyClick,
+  highlightedPropertyId
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -173,7 +173,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   // Generate property coordinates based on Rome zones
   const getPropertyCoordinates = (property: Property) => {
     const baseCoords = zoneCoordinates[property.zone] || zoneCoordinates['Roma'];
-    
+
     // Add small random offset to avoid overlapping markers
     const offset = 0.003;
     return {
@@ -204,10 +204,10 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     const initMap = () => {
       try {
         console.log('Initializing Google Maps...');
-        
+
         // Rome center coordinates
         const romeCenter = { lat: 41.9028, lng: 12.4964 };
-        
+
         // Simplified map styles for better reliability
         const mapStyles = [
           {
@@ -253,7 +253,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         });
         setInfoWindow(infoWindowInstance);
         setIsLoading(false);
-        
+
         console.log('Map initialization complete');
       } catch (error) {
         console.error('Error initializing map:', error);
@@ -275,10 +275,10 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     if (!checkGoogleMaps()) {
       console.log('Loading Google Maps API...');
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBzb6nFsuzocuMr4wI6pa14B6qhKLEyTME&libraries=places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=key-here&libraries=places`;
       script.async = true;
       script.defer = true;
-      
+
       script.onload = () => {
         console.log('Google Maps script loaded');
         // Wait longer for Google Maps to fully initialize
@@ -297,12 +297,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         };
         setTimeout(checkReady, 300);
       };
-      
+
       script.onerror = (error) => {
         console.error('Failed to load Google Maps API:', error);
         setIsLoading(false);
       };
-      
+
       document.head.appendChild(script);
     }
   }, []);
@@ -374,8 +374,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
             <span><strong>${property.rooms}</strong> locali</span>
             <span><strong>${property.bathrooms}</strong> bagni</span>
           </div>
-          <button onclick="window.selectProperty(${property.id})" 
-                  style="width: 100%; padding: 8px; background: #D97860; color: white; border: none; 
+          <button onclick="window.selectProperty(${property.id})"
+                  style="width: 100%; padding: 8px; background: #D97860; color: white; border: none;
                          border-radius: 4px; cursor: pointer; font-weight: bold;">
             Visualizza Dettagli
           </button>
@@ -408,7 +408,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         }
       });
       map.fitBounds(bounds);
-      
+
       // Ensure reasonable zoom level
       const listener = google.maps.event.addListener(map, 'idle', () => {
         const currentZoom = map.getZoom();
@@ -445,7 +445,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   return (
     <div className="h-full relative bg-[#FAF7F2] rounded-lg overflow-hidden">
       <div ref={mapRef} className="w-full h-full" />
-      
+
       {/* Map Loading Overlay */}
       {isLoading && (
         <div className="absolute inset-0 bg-[#FAF7F2] rounded-lg flex items-center justify-center">

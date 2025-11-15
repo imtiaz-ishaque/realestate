@@ -44,9 +44,9 @@ interface ListingData {
 // Rome zones - EXACT SAME as hero search bar with complete hierarchical structure
 const romeZones = {
   "Centro Storico": [
-    "Barberini", "Campo de' Fiori", "Colle Oppio", "Colosseo – Fori Imperiali", 
-    "Ghetto – Portico d'Ottavia", "Largo Argentina", "Montecitorio", "Monti", 
-    "Pantheon", "Piazza del Popolo", "Piazza Navona", "Sallustiano", "Spagna", 
+    "Barberini", "Campo de' Fiori", "Colle Oppio", "Colosseo – Fori Imperiali",
+    "Ghetto – Portico d'Ottavia", "Largo Argentina", "Montecitorio", "Monti",
+    "Pantheon", "Piazza del Popolo", "Piazza Navona", "Sallustiano", "Spagna",
     "Trevi", "Via Giulia", "Vittorio Veneto"
   ],
   "Prati, Borgo, Mazzini, Delle Vittorie, Degli Eroi": [
@@ -179,7 +179,7 @@ const propertyCategories = {
   'Case-Appartamenti': {
     'Appartamento': [
       'Monolocale',
-      'Bilocale', 
+      'Bilocale',
       'Trilocale',
       'Quadrilocale',
       '5 locali o più / Loft'
@@ -241,7 +241,7 @@ const energyClasses = ['A+', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'Non specificata
 // Category-specific property features
 const categoryFeatures = {
   'Case-Appartamenti': [
-    'Balcone', 'Terrazza', 'Giardino', 'Parcheggio', 'Ascensore', 
+    'Balcone', 'Terrazza', 'Giardino', 'Parcheggio', 'Ascensore',
     'Cantina', 'Soffitta', 'Camino', 'Aria condizionata', 'Riscaldamento autonomo',
     'Doppi vetri', 'Portineria', 'Video citofono', 'Allarme', 'Fibra ottica',
     'Parquet', 'Marmo', 'Cucina abitabile', 'Ripostiglio', 'Lavanderia'
@@ -379,28 +379,28 @@ export default function AddListingPage() {
       // Filter results to Rome area only
       autocomplete.addListener('place_changed', () => {
         const place = autocomplete.getPlace();
-        
+
         if (!place.formatted_address) return;
 
         // Check if the place is in Rome
         const isInRome = place.address_components?.some(component =>
-          component.types.includes('locality') && 
+          component.types.includes('locality') &&
           component.long_name.toLowerCase().includes('roma')
         ) || place.address_components?.some(component =>
-          component.types.includes('administrative_area_level_2') && 
+          component.types.includes('administrative_area_level_2') &&
           component.long_name.toLowerCase().includes('roma')
         );
 
         if (isInRome && place.formatted_address) {
           // Extract street name from formatted address
           let streetAddress = place.formatted_address;
-          
+
           // Remove postal code and city from the end
           streetAddress = streetAddress.replace(/,\s*\d{5}\s*Roma.*$/i, '');
           streetAddress = streetAddress.replace(/,\s*Roma.*$/i, '');
-          
-          setListingData(prev => ({ 
-            ...prev, 
+
+          setListingData(prev => ({
+            ...prev,
             address: streetAddress.trim()
           }));
         }
@@ -412,14 +412,14 @@ export default function AddListingPage() {
     // Load Google Maps API if not already loaded
     if (!window.google?.maps?.places) {
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBzb6nFsuzocuMr4wI6pa14B6qhKLEyTME&libraries=places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=key-here&libraries=places`;
       script.async = true;
       script.defer = true;
-      
+
       script.onload = () => {
         setTimeout(initializeAutocomplete, 100);
       };
-      
+
       document.head.appendChild(script);
     } else {
       initializeAutocomplete();
@@ -435,7 +435,7 @@ export default function AddListingPage() {
   // Auto-generate title based on selections - UPDATED to include address
   const generateTitle = () => {
     let title = '';
-    
+
     // Handle sub-sub category first (for apartments)
     if (listingData.subSubCategory) {
       title = listingData.subSubCategory;
@@ -453,24 +453,24 @@ export default function AddListingPage() {
     else if (listingData.mainCategory) {
       title = listingData.mainCategory;
     }
-    
+
     // Add business activity if selected
     if (listingData.businessActivities.length > 0) {
       title = listingData.businessActivities[0]; // Use first selected business activity
     }
-    
+
     // Add address if available, otherwise zone
     if (listingData.address) {
       title += ` in ${listingData.address}`;
     } else if (listingData.zone) {
       title += ` in ${listingData.zone}`;
     }
-    
+
     // Add rooms for apartments
     if (listingData.rooms && listingData.mainCategory === 'Case-Appartamenti') {
       title = `${listingData.rooms} ${listingData.rooms === '1' ? 'locale' : 'locali'} ${title}`;
     }
-    
+
     return title || 'Property Listing';
   };
 
@@ -583,7 +583,7 @@ export default function AddListingPage() {
   };
 
   // Check if we should show business activities - SAME LOGIC as hero
-  const shouldShowBusinessActivities = listingData.mainCategory === 'Commerciale' && 
+  const shouldShowBusinessActivities = listingData.mainCategory === 'Commerciale' &&
                                       listingData.subCategory === 'Attività/Licenza commerciale';
 
   // Zone selection functions - EXACT SAME as hero search bar
@@ -609,7 +609,7 @@ export default function AddListingPage() {
   };
 
   const toggleMacroZoneExpansion = (macroZone: string) => {
-    setExpandedMacroZones(prev => 
+    setExpandedMacroZones(prev =>
       prev.includes(macroZone)
         ? prev.filter(zone => zone !== macroZone)
         : [...prev, macroZone]
@@ -618,11 +618,11 @@ export default function AddListingPage() {
 
   const getFilteredMacroZones = () => {
     if (!zoneSearch) return Object.keys(romeZones);
-    
+
     return Object.keys(romeZones).filter(macroZone => {
       const subZones = romeZones[macroZone as keyof typeof romeZones] || [];
       const macroMatches = macroZone.toLowerCase().includes(zoneSearch.toLowerCase());
-      const subZoneMatches = subZones.some(subZone => 
+      const subZoneMatches = subZones.some(subZone =>
         subZone.toLowerCase().includes(zoneSearch.toLowerCase())
       );
       return macroMatches || subZoneMatches;
@@ -632,7 +632,7 @@ export default function AddListingPage() {
   const getFilteredSubZones = (macroZone: string) => {
     const subZones = romeZones[macroZone as keyof typeof romeZones] || [];
     if (!zoneSearch) return subZones;
-    
+
     return subZones.filter(subZone =>
       subZone.toLowerCase().includes(zoneSearch.toLowerCase())
     );
@@ -641,7 +641,7 @@ export default function AddListingPage() {
   // Filter business activities based on search
   const getFilteredBusinessActivities = () => {
     if (!businessSearch) return businessActivities;
-    return businessActivities.filter(activity => 
+    return businessActivities.filter(activity =>
       activity.toLowerCase().includes(businessSearch.toLowerCase())
     );
   };
@@ -668,7 +668,7 @@ export default function AddListingPage() {
 
     // Here you would submit to your backend/database
     console.log('Submitting property:', listingData);
-    
+
     // Add to submitted properties list
     setSubmittedProperties(prev => [...prev, { ...listingData }]);
     setIsSubmitted(true);
@@ -685,7 +685,7 @@ export default function AddListingPage() {
   // NEW: Handle adding another property
   const handleAddAnotherProperty = () => {
     const lastProperty = submittedProperties[submittedProperties.length - 1];
-    
+
     // Pre-fill common data from last property
     setListingData({
       listingType: lastProperty.listingType, // Keep same listing type
@@ -719,7 +719,7 @@ export default function AddListingPage() {
       utilities: [...lastProperty.utilities],
       contact: { ...lastProperty.contact } // Keep all contact info
     });
-    
+
     // Reset form state
     setIsSubmitted(false);
     setCurrentStep(1);
@@ -768,7 +768,7 @@ export default function AddListingPage() {
         preferences: []
       }
     });
-    
+
     setSubmittedProperties([]);
     setIsSubmitted(false);
     setCurrentStep(1);
@@ -818,7 +818,7 @@ export default function AddListingPage() {
 
       <div className="min-h-screen bg-[#F5F7FA]">
         <Header />
-        
+
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           {/* NEW: Success State - Show after submission */}
           {isSubmitted ? (
@@ -827,7 +827,7 @@ export default function AddListingPage() {
                 <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
                   <i className="ri-check-line text-2xl sm:text-3xl text-green-600"></i>
                 </div>
-                
+
                 <h1 className="text-2xl sm:text-3xl font-bold text-[#5C4B42] mb-3 sm:mb-4">Immobile Inviato con Successo!</h1>
                 <p className="text-[#8B7355] text-base sm:text-lg mb-6 sm:mb-8 px-2">
                   Il tuo immobile sarà pubblicato molto presto. Riceverai un'email di conferma a breve.
@@ -873,7 +873,7 @@ export default function AddListingPage() {
                     <i className="ri-add-line mr-2"></i>
                     Aggiungi Altro Immobile
                   </button>
-                  
+
                   <div className="text-xs sm:text-sm text-[#8B7355] mb-3 sm:mb-4 px-2">
                     <i className="ri-lightbulb-line mr-1"></i>
                     Precompileremo i dettagli comuni per farti risparmiare tempo
@@ -888,7 +888,7 @@ export default function AddListingPage() {
                       <i className="ri-refresh-line mr-2"></i>
                       Ricomincia da Capo
                     </button>
-                    
+
                     <a
                       href="/properties"
                       className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-[#C9A876] text-white rounded-lg hover:bg-[#B8956A] transition-colors font-medium text-center cursor-pointer whitespace-nowrap text-sm sm:text-base"
@@ -951,7 +951,7 @@ export default function AddListingPage() {
                   <div>
                     <h2 className="text-xl sm:text-2xl font-semibold text-[#5C4B42] mb-2">Trasforma il Tuo Immobile in Profitto</h2>
                     <p className="text-[#8B7355] mb-6 sm:mb-8 text-sm sm:text-base">Unisciti a migliaia di proprietari di successo a Roma che ottengono il massimo rendimento con zero commissioni</p>
-                    
+
                     <div className="space-y-6 sm:space-y-8">
                       {/* Listing Type */}
                       <div>
@@ -986,8 +986,8 @@ export default function AddListingPage() {
                             <button
                               key={category}
                               type="button"
-                              onClick={() => setListingData(prev => ({ 
-                                ...prev, 
+                              onClick={() => setListingData(prev => ({
+                                ...prev,
                                 mainCategory: category,
                                 subCategory: '',
                                 subSubCategory: '',
@@ -1014,8 +1014,8 @@ export default function AddListingPage() {
                               <button
                                 key={subCategory}
                                 type="button"
-                                onClick={() => setListingData(prev => ({ 
-                                  ...prev, 
+                                onClick={() => setListingData(prev => ({
+                                  ...prev,
                                   subCategory: subCategory,
                                   subSubCategory: '',
                                   businessActivities: []
@@ -1141,7 +1141,7 @@ export default function AddListingPage() {
                                   const subZones = getFilteredSubZones(macroZone);
                                   const isExpanded = expandedMacroZones.includes(macroZone);
                                   const hasVisibleSubZones = subZones.length > 0;
-                                  
+
                                   return (
                                     <div key={macroZone}>
                                       {/* Macro Zone */}
@@ -1154,7 +1154,7 @@ export default function AddListingPage() {
                                         >
                                           <i className={`ri-arrow-right-s-line text-sm transition-transform ${isExpanded ? 'rotate-90' : ''}`}></i>
                                         </button>
-                                        
+
                                         {/* Macro Zone Button */}
                                         <button
                                           type="button"
@@ -1171,7 +1171,7 @@ export default function AddListingPage() {
                                           </span>
                                         </button>
                                       </div>
-                                      
+
                                       {/* Sub Zones - Only show when expanded */}
                                       {isExpanded && hasVisibleSubZones && (
                                         <div className="bg-gray-50">
@@ -1252,7 +1252,7 @@ export default function AddListingPage() {
                   <div>
                     <h2 className="text-xl sm:text-2xl font-semibold text-[#5C4B42] mb-2">Dettagli Immobile</h2>
                     <p className="text-[#8B7355] mb-6 sm:mb-8 text-sm sm:text-base">Aggiungi foto e informazioni essenziali</p>
-                    
+
                     <div className="space-y-6 sm:space-y-8">
                       {/* Auto-generated Title */}
                       <div>
@@ -1444,7 +1444,7 @@ export default function AddListingPage() {
                               ))}
                             </div>
                           </div>
-                          
+
                           <div>
                             <label className="block text-base sm:text-lg font-medium text-[#5C4B42] mb-3 sm:mb-4">Caratteristiche Sicurezza:</label>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
@@ -1626,7 +1626,7 @@ export default function AddListingPage() {
                             Scegli Foto
                           </label>
                         </div>
-                        
+
                         {listingData.photos.length > 0 && (
                           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                             {listingData.photos.map((photo, index) => (
@@ -1670,7 +1670,7 @@ export default function AddListingPage() {
                   <div>
                     <h2 className="text-xl sm:text-2xl font-semibold text-[#5C4B42] mb-2">Come Possono Contattarti gli Acquirenti?</h2>
                     <p className="text-[#8B7355] mb-6 sm:mb-8 text-sm sm:text-base">Scegli almeno un metodo di contatto</p>
-                    
+
                     <div className="space-y-6 sm:space-y-8">
                       {/* Contact Methods */}
                       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -1697,8 +1697,8 @@ export default function AddListingPage() {
                           <input
                             type="tel"
                             value={listingData.contact.phone}
-                            onChange={(e) => setListingData(prev => ({ 
-                              ...prev, 
+                            onChange={(e) => setListingData(prev => ({
+                              ...prev,
                               contact: { ...prev.contact, phone: e.target.value, whatsapp: e.target.value }
                             }))}
                             placeholder="+39 123 456 7890"
@@ -1729,8 +1729,8 @@ export default function AddListingPage() {
                           <input
                             type="email"
                             value={listingData.contact.email}
-                            onChange={(e) => setListingData(prev => ({ 
-                              ...prev, 
+                            onChange={(e) => setListingData(prev => ({
+                              ...prev,
                               contact: { ...prev.contact, email: e.target.value }
                             }))}
                             placeholder="tua@email.com"
@@ -1761,8 +1761,8 @@ export default function AddListingPage() {
                           <input
                             type="tel"
                             value={listingData.contact.whatsapp}
-                            onChange={(e) => setListingData(prev => ({ 
-                              ...prev, 
+                            onChange={(e) => setListingData(prev => ({
+                              ...prev,
                               contact: { ...prev.contact, whatsapp: e.target.value }
                             }))}
                             placeholder="+39 123 456 7890"
@@ -1824,7 +1824,7 @@ export default function AddListingPage() {
                                 const description = listingData.description || '';
                                 const title = listingData.title || '';
                                 let businessName = '';
-                                
+
                                 // First try to extract from description
                                 if (description) {
                                   // Look for various patterns that indicate business name before location
@@ -1834,7 +1834,7 @@ export default function AddListingPage() {
                                     /^([^.!?]+?)(?:\s*[.!?]\s*)/i, // Sentence ending
                                     /^([^,]+?)(?:\s*,\s*)/i // Comma separator
                                   ];
-                                  
+
                                   for (const pattern of patterns) {
                                     const match = description.match(pattern);
                                     if (match && match[1].trim().length > 3 && match[1].trim().length <= 60) {
@@ -1842,7 +1842,7 @@ export default function AddListingPage() {
                                       break;
                                     }
                                   }
-                                  
+
                                   // If no pattern found, take first meaningful part
                                   if (!businessName) {
                                     const words = description.trim().split(/\s+/);
@@ -1854,7 +1854,7 @@ export default function AddListingPage() {
                                     }
                                   }
                                 }
-                                
+
                                 // If no business name from description, try to extract from title
                                 if (!businessName && title) {
                                   const patterns = [
@@ -1863,7 +1863,7 @@ export default function AddListingPage() {
                                     /^([^.!?]+?)(?:\s*[.!?]\s*)/i,
                                     /^([^,]+?)(?:\s*,\s*)/i
                                   ];
-                                  
+
                                   for (const pattern of patterns) {
                                     const match = title.match(pattern);
                                     if (match && match[1].trim().length > 3 && match[1].trim().length <= 60) {
@@ -1872,7 +1872,7 @@ export default function AddListingPage() {
                                     }
                                   }
                                 }
-                                
+
                                 // Clean up business name
                                 if (businessName) {
                                   // Remove common property-related words that might interfere
@@ -1884,29 +1884,29 @@ export default function AddListingPage() {
                                     businessName = '';
                                   }
                                 }
-                                
+
                                 return (
                                   <div className="space-y-1">
                                     {/* Business Name - Only show if we found a meaningful one */}
                                     {businessName && (
                                       <h4 className="font-semibold text-[#5C4B42] text-base sm:text-lg break-words">{businessName}</h4>
                                     )}
-                                    
+
                                     {/* Property Title - Show if no business name extracted or as fallback */}
                                     {!businessName && title && (
                                       <h4 className="font-semibold text-[#5C4B42] text-base sm:text-lg break-words">{title}</h4>
                                     )}
-                                    
+
                                     {/* Zone */}
                                     <div className="text-xs sm:text-sm text-[#8B7355] font-medium">
                                       {listingData.zone || 'Zona'}
                                     </div>
-                                    
+
                                     {/* Street Address */}
                                     <div className="text-xs sm:text-sm text-[#8B7355] break-words">
                                       {listingData.address || 'Indirizzo'}
                                     </div>
-                                    
+
                                     {/* Price and specs on separate line */}
                                     <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 sm:mt-3 pt-2 border-t border-gray-300">
                                       <span className="font-semibold text-[#D97860] text-sm sm:text-base">
@@ -1919,7 +1919,7 @@ export default function AddListingPage() {
                                       {listingData.garageType && <span className="text-xs sm:text-sm text-[#8B7355]">{listingData.garageType}</span>}
                                       {listingData.officeType && <span className="text-xs sm:text-sm text-[#8B7355]">{listingData.officeType}</span>}
                                     </div>
-                                    
+
                                     {/* Features if any */}
                                     {listingData.features.length > 0 && (
                                       <div className="flex items-center mt-2">
@@ -1930,7 +1930,7 @@ export default function AddListingPage() {
                                         </span>
                                       </div>
                                     )}
-                                    
+
                                     {/* Category-specific information */}
                                     {listingData.mainCategory && (
                                       <div className="text-xs text-[#8B7355] mt-2">
@@ -1985,7 +1985,7 @@ export default function AddListingPage() {
                     <i className="ri-arrow-left-line mr-2"></i>
                     Precedente
                   </button>
-                  
+
                   {currentStep < 3 && (
                     <button
                       onClick={handleNext}
@@ -2009,8 +2009,8 @@ export default function AddListingPage() {
         <Footer />
 
         {/* Login Modal for Publishing */}
-        <LoginModal 
-          isOpen={isLoginModalOpen} 
+        <LoginModal
+          isOpen={isLoginModalOpen}
           onClose={() => setIsLoginModalOpen(false)}
           onLoginSuccess={handleLoginSuccess}
         />
