@@ -1,0 +1,52 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #FAF7F2;
+  color: #3D2817;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #3D2817;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F9F6F3;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C9A876;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B8956A;
+}
+
+/* Focus styles for accessibility */
+*:focus {
+  outline: 2px solid #D97860;
+  outline-offset: 2px;
+}
+
+/* Form input focus styles */
+input:focus, select:focus, textarea:focus {
+  border-color: #D97860;
+  box-shadow: 0 0 0 3px rgba(217, 120, 96, 0.1);
+}
